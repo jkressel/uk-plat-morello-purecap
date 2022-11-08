@@ -1,16 +1,14 @@
-# raspi
+# plat-morello
 
-Raspberry Pi 3B+ platform
+Morello platform
 
-In order to compile an application that will run on the Raspberry Pi 3B+, please
+In order to compile an application that will run on the Morello, please
 select/deselect the following options in the make menuconfig:
 - Architecture Selection --> Architecture --> select: Arrmv8 compatible (64 bits)
-- Architecture Selection --> Processor Optimization --> select: Generic Armv8 Cortex A53
+- Architecture Selection --> Processor Optimization --> select: Generic Armv8 CPU
 - Architecture Selection --> deselect: Workaround for Cortex-A73 erratum
-- Platform Configuration --> select: Raspberry Pi 3B+
-- Library Configuration --> ukboot --> deselect: Show Unikraft banner (this is to minimize boot time)
-- Build Options --> select: Drop unused functions and data
+- Platform Configuration --> select: Morello
 
-Once built, in a blank SD card formated to FAT32, copy the generated kernel8.img Unikraft image (without changing
-the name of the image file, as otherwise the Raspberry Pi's bootloader will not recongize it), plus the four files
-that are inside the plats/raspi/bootfiles folder (i.e., bootcode.bin, config.txt, fixup.dat, and start.elf).
+This will build an ELF file. Once built, consult the ARM Morello bare metal documentation https://git.morello-project.org/morello/docs/-/blob/morello/mainline/standalone-baremetal-readme.rst
+
+Please note, this is still very much an early, possibly horribly broken WIP. Most features are not yet present.
