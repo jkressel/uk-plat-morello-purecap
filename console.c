@@ -30,22 +30,22 @@
 #include <uk/plat/console.h>
 #include <uk/config.h>
 #include <uk/essentials.h>
-#if (CONFIG_RASPI_PRINTF_SERIAL_CONSOLE || CONFIG_RASPI_DEBUG_SERIAL_CONSOLE || CONFIG_RASPI_KERNEL_SERIAL_CONSOLE)
-#include <raspi/serial_console.h>
+#if (CONFIG_MORELLO_PRINTF_SERIAL_CONSOLE || CONFIG_MORELLO_DEBUG_SERIAL_CONSOLE || CONFIG_MORELLO_KERNEL_SERIAL_CONSOLE)
+#include <morello/serial_console.h>
 #endif
 
-void _libraspiplat_init_console(void)
+void _libmorelloplat_init_console(void)
 {
-#if (CONFIG_RASPI_PRINTF_SERIAL_CONSOLE || CONFIG_RASPI_DEBUG_SERIAL_CONSOLE || CONFIG_RASPI_KERNEL_SERIAL_CONSOLE)
-	_libraspiplat_init_serial_console();
+#if (CONFIG_MORELLO_PRINTF_SERIAL_CONSOLE || CONFIG_MORELLO_DEBUG_SERIAL_CONSOLE || CONFIG_MORELLO_KERNEL_SERIAL_CONSOLE)
+	_libmorelloplat_init_serial_console();
 #endif
 }
 
 int ukplat_coutd(const char *buf __maybe_unused, unsigned int len)
 {
 	for (unsigned int i = 0; i < len; i++) {
-#if (CONFIG_RASPI_PRINTF_SERIAL_CONSOLE || CONFIG_RASPI_DEBUG_SERIAL_CONSOLE)
-		_libraspiplat_serial_putc(buf[i]);
+#if (CONFIG_MORELLO_PRINTF_SERIAL_CONSOLE || CONFIG_MORELLO_DEBUG_SERIAL_CONSOLE)
+		_libmorelloplat_serial_putc(buf[i]);
 #endif
 	}
 	return len;
@@ -54,8 +54,8 @@ int ukplat_coutd(const char *buf __maybe_unused, unsigned int len)
 int ukplat_coutk(const char *buf __maybe_unused, unsigned int len)
 {
 	for (unsigned int i = 0; i < len; i++) {
-#if (CONFIG_RASPI_PRINTF_SERIAL_CONSOLE || CONFIG_RASPI_KERNEL_SERIAL_CONSOLE)
-		_libraspiplat_serial_putc(buf[i]);
+#if (CONFIG_MORELLO_PRINTF_SERIAL_CONSOLE || CONFIG_MORELLO_KERNEL_SERIAL_CONSOLE)
+		_libmorelloplat_serial_putc(buf[i]);
 #endif
 	}
 	return len;
@@ -66,9 +66,9 @@ int ukplat_cink(char *buf __maybe_unused, unsigned int maxlen __maybe_unused)
 	int ret __maybe_unused;
 	unsigned int num = 0;
 
-#if (CONFIG_RASPI_PRINTF_SERIAL_CONSOLE || CONFIG_RASPI_KERNEL_SERIAL_CONSOLE)
+#if (CONFIG_MORELLO_PRINTF_SERIAL_CONSOLE || CONFIG_MORELLO_KERNEL_SERIAL_CONSOLE)
 	while (num < maxlen
-	       && (ret = _libraspiplat_serial_getc()) >= 0) {
+	       && (ret = _libmorelloplat_serial_getc()) >= 0) {
 		*(buf++) = (char) ret;
 		num++;
 	}

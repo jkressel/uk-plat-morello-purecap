@@ -32,44 +32,58 @@
  *
  * THIS HEADER MAY NOT BE EXTRACTED OR MODIFIED IN ANY WAY.
  */
+ 
+.globl get_sp
+get_sp:
+    mov		x0, sp
+    ret
 
-#include <uk/plat/bootstrap.h>
-#include <uk/plat/time.h>
-#include <arm/cpu.h>
-#include <morello/console.h>
-#include <morello/time.h>
-#include <uk/print.h>
-#include <uk/arch/types.h>
+.globl get_sp_start
+get_sp_start:
+    ldr     x1, =_start
+    ret
 
-smcc_psci_callfn_t smcc_psci_call;
+.globl get_el
+get_el:
+    mrs x0, CurrentEL
+    lsr x0, x0, #2
+    ret
 
-static uint64_t assembly_entry;
-static uint64_t hardware_init_done;
+.globl get_spsel
+get_spsel:
+    mrs x0, SPSel
+    ret
 
-uint64_t _libmorelloplat_get_reset_time(void)
-{
-	return assembly_entry;
-}
+.globl get_sctlr_el1
+get_sctlr_el1:
+    mrs x0, sctlr_el1
+    ret
 
-uint64_t _libmorelloplat_get_hardware_init_time(void)
-{
-	return hardware_init_done;
-}
+.globl get_unikraft_text_size
+get_unikraft_text_size:
+	ldr x0, =_text
+	ldr x1, =_ectors
+	sub x0, x1, x0
+	ret
 
-void _libmorelloplat_entry(uint64_t low0, uint64_t hi0, uint64_t low1, uint64_t hi1)
-{
-//	if (hi0 == hi1) {
-//		assembly_entry = ((hi0 << 32)&0xFFFFFFFF00000000) | (low0&0xFFFFFFFF);
-//	} else {
-//		assembly_entry = ((hi1 << 32)&0xFFFFFFFF00000000) | (low1&0xFFFFFFFF);
-//	}
+.globl get_unikraft_data_size
+get_unikraft_data_size:
+	ldr x0, =_data
+	ldr x1, =_edata
+	sub x0, x1, x0
+	ldr x1, =_tls_start
+	ldr x2, =_etdata
+	sub x1, x2, x1
+	add x0, x0, x1
+	ret
 
-    _libmorelloplat_init_console();
-	
-//	hardware_init_done = get_system_timer();
-
-	/*
-	 * Enter Unikraft
-	 */
-	ukplat_entry(0, 0);
-}
+.globl get_unikraft_bss_size
+get_unikraft_bss_size:
+	ldr x0, =__bss_start
+	ldr x1, =__bss_end
+	sub x0, x1, x0
+	ldr x1, =_etdata
+	ldr x2, =_tls_end
+	sub x1, x2, x1
+	add x0, x0, x1
+	ret

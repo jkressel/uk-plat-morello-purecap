@@ -43,10 +43,10 @@
 #include <uk/plat/common/cpu.h>
 #include <uk/plat/common/irq.h>
 #include <arm/time.h>
-#include <raspi/time.h>
-#include <raspi/irq.h>
+#include <morello/time.h>
+#include <morello/irq.h>
 
-#define RASPI_ARM_SIDE_TIMER_LOAD_INIT	(0x00FFFFFF)
+#define MORELLO_ARM_SIDE_TIMER_LOAD_INIT	(0x00FFFFFF)
 
 static uint32_t timer_irq_delay;
 
@@ -110,35 +110,35 @@ void ukplat_time_init(void)
 //	generic_timer_enable();
 }
 
-static void raspi_arm_side_timer_init(void)
+static void morello_arm_side_timer_init(void)
 {
-	*RASPI_ARM_SIDE_TIMER_CTL = RASPI_ARM_SIDE_TIMER_CTL_ENABLE_BIT | RASPI_ARM_SIDE_TIMER_CTL_BITS_BIT;
-	*RASPI_ARM_SIDE_TIMER_PREDIVIDER = 0;
-	*RASPI_ARM_SIDE_TIMER_LOAD = RASPI_ARM_SIDE_TIMER_LOAD_INIT;
+	*MORELLO_ARM_SIDE_TIMER_CTL = MORELLO_ARM_SIDE_TIMER_CTL_ENABLE_BIT | MORELLO_ARM_SIDE_TIMER_CTL_BITS_BIT;
+	*MORELLO_ARM_SIDE_TIMER_PREDIVIDER = 0;
+	*MORELLO_ARM_SIDE_TIMER_LOAD = MORELLO_ARM_SIDE_TIMER_LOAD_INIT;
 }
 
-static int handle_raspi_side_timer_irq(void *arg __unused)
+static int handle_morello_side_timer_irq(void *arg __unused)
 {
-	uint64_t timerValue1 = raspi_arm_side_timer_get_value();
-	uint64_t timerValue2 = raspi_arm_side_timer_get_value();
-	raspi_arm_side_timer_irq_disable();
-	raspi_arm_side_timer_irq_clear();
+	uint64_t timerValue1 = morello_arm_side_timer_get_value();
+	uint64_t timerValue2 = morello_arm_side_timer_get_value();
+	morello_arm_side_timer_irq_disable();
+	morello_arm_side_timer_irq_clear();
 
 	// The counter is decreasing, so to get the delay of the IRQ response we substract the value of the timer at the entry of this
 	// function from the timer load value. Further, to account for the time needed to sample the timer, we take a second sample
 	// and also substract the difference beween the two points
-	timer_irq_delay = (raspi_arm_side_timer_get_load() - timerValue1) - (timerValue1 - timerValue2);
+	timer_irq_delay = (morello_arm_side_timer_get_load() - timerValue1) - (timerValue1 - timerValue2);
 
 	return 1;
 }
 
-void raspi_irq_delay_measurements_init(void)
+void morello_irq_delay_measurements_init(void)
 {
 	int rc;
 
-	raspi_arm_side_timer_init();
+	morello_arm_side_timer_init();
 
-	rc = ukplat_irq_register(IRQ_ID_RASPI_ARM_SIDE_TIMER, handle_raspi_side_timer_irq, NULL);
+	rc = ukplat_irq_register(IRQ_ID_MORELLO_ARM_SIDE_TIMER, handle_morello_side_timer_irq, NULL);
 	if (rc < 0)
 		UK_CRASH("Failed to register timer interrupt handler\n");
 }
@@ -150,13 +150,13 @@ uint64_t get_system_timer(void)
 {
 	uint32_t h, l;
 	// we must read MMIO area as two separate 32 bit reads
-	h = *RASPI_SYS_TIMER_CHI;
-	l = *RASPI_SYS_TIMER_CLO;
+	h = *MORELLO_SYS_TIMER_CHI;
+	l = *MORELLO_SYS_TIMER_CLO;
 	// we have to repeat it if high word changed during read
-	if (h != *RASPI_SYS_TIMER_CHI)
+	if (h != *MORELLO_SYS_TIMER_CHI)
 	{
-		h = *RASPI_SYS_TIMER_CHI;
-		l = *RASPI_SYS_TIMER_CLO;
+		h = *MORELLO_SYS_TIMER_CHI;
+		l = *MORELLO_SYS_TIMER_CLO;
 	}
 	// compose long int value
 	return ((uint64_t)h << 32) | l;

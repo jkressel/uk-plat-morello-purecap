@@ -24,8 +24,7 @@
  *
  */
 
-#include <raspi/sysregs.h>
-#include <raspi/mbox.h>
+#include <morello/sysregs.h>
 
 /* PL011 UART registers */
 #define UART0_DR        ((volatile unsigned int*)(0x2A400000+0x0))
@@ -61,7 +60,7 @@ static unsigned int serial_rx_buffer_empty(void)
 /**
  * Set baud rate and characteristics (115200 8N1) and map to GPIO
  */
-void _libraspiplat_init_serial_console()
+void _libmorelloplat_init_serial_console()
 {
     register unsigned int r;
 
@@ -101,10 +100,10 @@ void _libraspiplat_init_serial_console()
 /**
  * Send a character
  */
-void _libraspiplat_serial_putc(char c)
+void _libmorelloplat_serial_putc(char c)
 {
 	if ((c == '\n') && (prev_sent_char != '\r'))
-		_libraspiplat_serial_putc('\r');
+		_libmorelloplat_serial_putc('\r');
 
     // Wait until we can send
     do{
@@ -119,7 +118,7 @@ void _libraspiplat_serial_putc(char c)
 /**
  * Receive a character
  */
-int  _libraspiplat_serial_getc(void)
+int  _libmorelloplat_serial_getc(void)
 {
 	if (serial_rx_buffer_empty())
 		return -1;

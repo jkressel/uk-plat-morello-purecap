@@ -25,9 +25,9 @@
  *
  */
 
-#include <raspi/sysregs.h>
-#include <raspi/mm.h>
-#include <raspi/mmu.h>
+#include <morello/sysregs.h>
+#include <morello/mm.h>
+#include <morello/mmu.h>
 #include <uk/config.h>
 
 .section ".text.boot"
@@ -201,7 +201,7 @@ LDR   x1, =_pagetables
   DSB      SY
 
 
-	ldr		x4, =_libraspiplat_entry
+	ldr		x4, =_libmorelloplat_entry
 
 
 
@@ -235,17 +235,6 @@ LDR   x1, =_pagetables
         and             x1, x1, #-16
         mov             sp, x1
 
-#if CONFIG_RASPI_WATERMARK_STACK
-watermark_stack_start:
-    ldr     x1, =VA_START
-    ldr     w2, =0x10000
-watermark_stack_loop: 
-	cbz     w2, watermark_stack_done
-    str     x2, [x1], #8
-    sub     w2, w2, #1
-    cbnz    w2, watermark_stack_loop
-watermark_stack_done:
-#endif
 
 
 clear_bss_start:
@@ -270,7 +259,7 @@ jump_to_C:
 	mov		w1, w11
 	mov		w2, w12
 	mov		w3, w13
-//	b      _libraspiplat_entry
+//	b      _libmorelloplat_entry
 	br 		x4
 
 	// As a failsafe, we also hang the main core

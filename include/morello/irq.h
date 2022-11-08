@@ -33,43 +33,36 @@
  * THIS HEADER MAY NOT BE EXTRACTED OR MODIFIED IN ANY WAY.
  */
 
-#include <uk/plat/bootstrap.h>
-#include <uk/plat/time.h>
-#include <arm/cpu.h>
-#include <morello/console.h>
-#include <morello/time.h>
-#include <uk/print.h>
-#include <uk/arch/types.h>
+#ifndef __MORELLO_IRQ_H__
+#define __MORELLO_IRQ_H__
 
-smcc_psci_callfn_t smcc_psci_call;
+#include <morello/sysregs.h>
 
-static uint64_t assembly_entry;
-static uint64_t hardware_init_done;
+#define IRQ_BASIC_PENDING	((volatile __u32 *)(MMIO_BASE+0x0000B200))
+#define IRQ_PENDING_1		((volatile __u32 *)(MMIO_BASE+0x0000B204))
+#define IRQ_PENDING_2		((volatile __u32 *)(MMIO_BASE+0x0000B208))
+#define FIQ_CONTROL			((volatile __u32 *)(MMIO_BASE+0x0000B20C))
+#define ENABLE_IRQS_1		((volatile __u32 *)(MMIO_BASE+0x0000B210))
+#define ENABLE_IRQS_2		((volatile __u32 *)(MMIO_BASE+0x0000B214))
+#define ENABLE_BASIC_IRQS	((volatile __u32 *)(MMIO_BASE+0x0000B218))
+#define DISABLE_IRQS_1		((volatile __u32 *)(MMIO_BASE+0x0000B21C))
+#define DISABLE_IRQS_2		((volatile __u32 *)(MMIO_BASE+0x0000B220))
+#define DISABLE_BASIC_IRQS	((volatile __u32 *)(MMIO_BASE+0x0000B224))
 
-uint64_t _libmorelloplat_get_reset_time(void)
-{
-	return assembly_entry;
-}
+#define IRQS_BASIC_ARM_TIMER_IRQ	(1 << 0)
 
-uint64_t _libmorelloplat_get_hardware_init_time(void)
-{
-	return hardware_init_done;
-}
+#define IRQS_1_SYSTEM_TIMER_IRQ_0	(1 << 0)
+#define IRQS_1_SYSTEM_TIMER_IRQ_1	(1 << 1)
+#define IRQS_1_SYSTEM_TIMER_IRQ_2	(1 << 2)
+#define IRQS_1_SYSTEM_TIMER_IRQ_3	(1 << 3)
+#define IRQS_1_USB_IRQ				(1 << 9)
 
-void _libmorelloplat_entry(uint64_t low0, uint64_t hi0, uint64_t low1, uint64_t hi1)
-{
-//	if (hi0 == hi1) {
-//		assembly_entry = ((hi0 << 32)&0xFFFFFFFF00000000) | (low0&0xFFFFFFFF);
-//	} else {
-//		assembly_entry = ((hi1 << 32)&0xFFFFFFFF00000000) | (low1&0xFFFFFFFF);
-//	}
+#define IRQS_MAX							2
+#define IRQ_ID_ARM_GENERIC_TIMER			0
+#define IRQ_ID_MORELLO_ARM_SIDE_TIMER			1
 
-    _libmorelloplat_init_console();
-	
-//	hardware_init_done = get_system_timer();
+void irq_vector_init( void );
+void enable_irq( void );
+void disable_irq( void );
 
-	/*
-	 * Enter Unikraft
-	 */
-	ukplat_entry(0, 0);
-}
+#endif /* __MORELLO_IRQ_H__ */

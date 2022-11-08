@@ -33,43 +33,15 @@
  * THIS HEADER MAY NOT BE EXTRACTED OR MODIFIED IN ANY WAY.
  */
 
-#include <uk/plat/bootstrap.h>
-#include <uk/plat/time.h>
-#include <arm/cpu.h>
-#include <morello/console.h>
-#include <morello/time.h>
-#include <uk/print.h>
-#include <uk/arch/types.h>
+#ifndef __MORELLO_SETUP_H__
+#define __MORELLO_SETUP_H__
 
-smcc_psci_callfn_t smcc_psci_call;
+#include <stdint.h>
 
-static uint64_t assembly_entry;
-static uint64_t hardware_init_done;
+uint64_t _libmorelloplat_get_reset_time(void);
+uint64_t _libmorelloplat_get_hardware_init_time(void);
 
-uint64_t _libmorelloplat_get_reset_time(void)
-{
-	return assembly_entry;
-}
+uint64_t get_sp ( void );
+uint64_t get_sp_start ( void );
 
-uint64_t _libmorelloplat_get_hardware_init_time(void)
-{
-	return hardware_init_done;
-}
-
-void _libmorelloplat_entry(uint64_t low0, uint64_t hi0, uint64_t low1, uint64_t hi1)
-{
-//	if (hi0 == hi1) {
-//		assembly_entry = ((hi0 << 32)&0xFFFFFFFF00000000) | (low0&0xFFFFFFFF);
-//	} else {
-//		assembly_entry = ((hi1 << 32)&0xFFFFFFFF00000000) | (low1&0xFFFFFFFF);
-//	}
-
-    _libmorelloplat_init_console();
-	
-//	hardware_init_done = get_system_timer();
-
-	/*
-	 * Enter Unikraft
-	 */
-	ukplat_entry(0, 0);
-}
+#endif /* __MORELLO_SETUP_H__ */
