@@ -112,10 +112,12 @@ SECTIONS
     }
 	__bss_end = .;
 
+    . = ALIGN(__PAGE_SIZE);
+	. = ALIGN(16);
         __stack_start = .;
     .bss.stack (NOLOAD) :
         {
-                . += 3 * __PAGE_SIZE;
+                . += 128 * __PAGE_SIZE;
     }
         __stack_end = .;
 

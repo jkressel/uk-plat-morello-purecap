@@ -89,59 +89,59 @@ void ukplat_time_init(void)
 	 * Monotonic time begins at boot_ticks (first read of counter
 	 * before calibration).
 	 */
-//	generic_timer_update_boot_ticks();
+	generic_timer_update_boot_ticks();
 
 	/* Currently, we only support 1 timer per system */
-//	rc = generic_timer_init(0);
-//	if (rc < 0)
-//		UK_CRASH("Failed to initialize platform time\n");
+	rc = generic_timer_init(0);
+	if (rc < 0)
+		UK_CRASH("Failed to initialize platform time\n");
 
-//	rc = ukplat_irq_register(IRQ_ID_ARM_GENERIC_TIMER, generic_timer_irq_handler, NULL);
-//	if (rc < 0)
-//		UK_CRASH("Failed to register timer interrupt handler\n");
+	rc = ukplat_irq_register(IRQ_ID_ARM_GENERIC_TIMER, generic_timer_irq_handler, NULL);
+	if (rc < 0)
+		UK_CRASH("Failed to register timer interrupt handler\n");
 
 	/*
 	 * Mask IRQ before scheduler start working. Otherwise we will get
 	 * unexpected timer interrupts when system is booting.
 	 */
-//	generic_timer_mask_irq();
+	generic_timer_mask_irq();
 
 	/* Enable timer */
-//	generic_timer_enable();
+	generic_timer_enable();
 }
 
-static void morello_arm_side_timer_init(void)
-{
-	*MORELLO_ARM_SIDE_TIMER_CTL = MORELLO_ARM_SIDE_TIMER_CTL_ENABLE_BIT | MORELLO_ARM_SIDE_TIMER_CTL_BITS_BIT;
-	*MORELLO_ARM_SIDE_TIMER_PREDIVIDER = 0;
-	*MORELLO_ARM_SIDE_TIMER_LOAD = MORELLO_ARM_SIDE_TIMER_LOAD_INIT;
-}
+// static void morello_arm_side_timer_init(void)
+// {
+// 	*MORELLO_ARM_SIDE_TIMER_CTL = MORELLO_ARM_SIDE_TIMER_CTL_ENABLE_BIT | MORELLO_ARM_SIDE_TIMER_CTL_BITS_BIT;
+// 	*MORELLO_ARM_SIDE_TIMER_PREDIVIDER = 0;
+// 	*MORELLO_ARM_SIDE_TIMER_LOAD = MORELLO_ARM_SIDE_TIMER_LOAD_INIT;
+// }
 
-static int handle_morello_side_timer_irq(void *arg __unused)
-{
-	uint64_t timerValue1 = morello_arm_side_timer_get_value();
-	uint64_t timerValue2 = morello_arm_side_timer_get_value();
-	morello_arm_side_timer_irq_disable();
-	morello_arm_side_timer_irq_clear();
+// static int handle_morello_side_timer_irq(void *arg __unused)
+// {
+// 	uint64_t timerValue1 = morello_arm_side_timer_get_value();
+// 	uint64_t timerValue2 = morello_arm_side_timer_get_value();
+// 	morello_arm_side_timer_irq_disable();
+// 	morello_arm_side_timer_irq_clear();
 
-	// The counter is decreasing, so to get the delay of the IRQ response we substract the value of the timer at the entry of this
-	// function from the timer load value. Further, to account for the time needed to sample the timer, we take a second sample
-	// and also substract the difference beween the two points
-	timer_irq_delay = (morello_arm_side_timer_get_load() - timerValue1) - (timerValue1 - timerValue2);
+// 	// The counter is decreasing, so to get the delay of the IRQ response we substract the value of the timer at the entry of this
+// 	// function from the timer load value. Further, to account for the time needed to sample the timer, we take a second sample
+// 	// and also substract the difference beween the two points
+// 	timer_irq_delay = (morello_arm_side_timer_get_load() - timerValue1) - (timerValue1 - timerValue2);
 
-	return 1;
-}
+// 	return 1;
+// }
 
-void morello_irq_delay_measurements_init(void)
-{
-	int rc;
+// void morello_irq_delay_measurements_init(void)
+// {
+// 	int rc;
 
-	morello_arm_side_timer_init();
+// 	morello_arm_side_timer_init();
 
-	rc = ukplat_irq_register(IRQ_ID_MORELLO_ARM_SIDE_TIMER, handle_morello_side_timer_irq, NULL);
-	if (rc < 0)
-		UK_CRASH("Failed to register timer interrupt handler\n");
-}
+// 	rc = ukplat_irq_register(IRQ_ID_MORELLO_ARM_SIDE_TIMER, handle_morello_side_timer_irq, NULL);
+// 	if (rc < 0)
+// 		UK_CRASH("Failed to register timer interrupt handler\n");
+// }
 
 /**
  * Get System Timer's counter

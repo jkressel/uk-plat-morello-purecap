@@ -29,7 +29,7 @@
 #ifndef __MORELLO_ENTRY_H__
 #define __MORELLO_ENTRY_H__
 
-#define S_FRAME_SIZE			256 		// Size of all saved registers 
+#define S_FRAME_SIZE			512 		// Size of all saved registers 
 
 #define SYNC_INVALID_EL3t		0 
 #define IRQ_INVALID_EL3t		1 
