@@ -87,12 +87,22 @@ setup_cpu:
  	msr   vmpidr_el2, x0
 
 
-	// Set up exception vectors for el1	
+	// Set up exception vectors	
 	// --------------------------------
 	ldr      x0, =vectors_el1
 	cvtp     c0, x0
   	msr      cvbar_el1, c0
 	msr      vbar_el1, x0
+
+	ldr      x0, =vectors_el2
+	cvtp     c0, x0
+  	msr      cvbar_el2, c0
+	msr      vbar_el2, x0
+
+	ldr      x0, =vectors_el3
+	cvtp     c0, x0
+  	msr      cvbar_el3, c0
+	msr      vbar_el3, x0
  
  
 	// Set VMID
@@ -144,7 +154,9 @@ el1_entry:
 
 
 	ldr   x0, =_pagetables
-	msr   ttbr0_el1, x0          
+	msr   ttbr0_el1, x0   
+
+	mrs      c0, cvbar_el1       
 
 
 	// Set up memory attributes
