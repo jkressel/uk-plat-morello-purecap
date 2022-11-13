@@ -38,10 +38,5 @@
 
 #include <stdint.h>
 
-uint64_t _libmorelloplat_get_reset_time(void);
-uint64_t _libmorelloplat_get_hardware_init_time(void);
-
-uint64_t get_sp ( void );
-uint64_t get_sp_start ( void );
 
 #endif /* __MORELLO_SETUP_H__ */

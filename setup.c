@@ -43,7 +43,7 @@
 
 smcc_psci_callfn_t smcc_psci_call;
 
-void _libmorelloplat_entry(uint64_t low0, uint64_t hi0, uint64_t low1, uint64_t hi1)
+void _libmorelloplat_entry()
 {
 
     _libmorelloplat_init_console();
