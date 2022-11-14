@@ -41,7 +41,7 @@
 #include <uk/print.h>
 #include <uk/arch/types.h>
 
-smcc_psci_callfn_t smcc_psci_call;
+smccc_conduit_fn_t smccc_psci_call;
 
 void _libmorelloplat_entry()
 {

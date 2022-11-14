@@ -76,6 +76,13 @@ setup_cpu:
 	msr		cpacr_el1, x0 //enable fp and capabilities
 
 
+	ldr x0, =(1 << 5)
+	msr cctlr_el3, x0
+
+//		ldr        x0, =(0) // EC (bit 9) is 1     
+//    msr        cptr_el3, x0
+
+
 	isb
 
 

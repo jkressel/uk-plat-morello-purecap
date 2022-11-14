@@ -25,6 +25,7 @@
 #include <uk/essentials.h>
 #include <morello/sysregs.h>
 #include <morello/memory.h>
+#include <stddef.h>
 
 int ukplat_memregion_count(void)
 {
