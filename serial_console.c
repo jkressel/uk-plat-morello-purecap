@@ -68,8 +68,8 @@ void _libmorelloplat_init_serial_console()
     *UART0_CR = 0;         // turn off UART0
 
     *UART0_ICR = 0x7FF;    // clear interrupts
-    *UART0_IBRD = 2;       // 115200 baud
-    *UART0_FBRD = 0xB;
+    *UART0_IBRD = 0x1B;       // 115200 baud
+    *UART0_FBRD = 0x9;
     *UART0_LCRH = 0b11<<5; // 8n1
     *UART0_CR = 0x301;     // enable Tx, Rx, FIFO
 }
