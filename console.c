@@ -6,11 +6,13 @@
  *          Florian Schmidt <florian.schmidt@neclab.eu>
  *          Simon Kuenzer <simon.kuenzer@neclab.eu>
  *          Santiago Pagani <santiagopagani@gmail.com>
+ *          John A. Kressel <jkressel.apps@gmail.com>
  *
  * Copyright (c) 2015-2017 IBM
  * Copyright (c) 2016-2017 Docker, Inc.
  * Copyright (c) 2020, NEC Laboratories Europe GmbH, NEC Corporation.
  *                     All rights reserved.
+ * Copyright (c) 2022, John A. Kressel <jkressel.apps@gmail.com>
  *
  * Permission to use, copy, modify, and/or distribute this software
  * for any purpose with or without fee is hereby granted, provided

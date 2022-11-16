@@ -2,6 +2,9 @@
  * Copyright (C) 2018, bzt (bztsrc@github), https://github.com/bztsrc/raspi3-tutorial
  * Copyright (c) 2018, Sergey Matyukevich <https://github.com/s-matyukevich/raspberry-pi-os>
  *           (c) 2020, Santiago Pagani <santiagopagani@gmail.com>
+ * Copyright (c) 2022, John A. Kressel <jkressel.apps@gmail.com>
+ *
+ *
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation

@@ -4,6 +4,7 @@
  *
  * Copyright (c) 2020, NEC Laboratories Europe GmbH, NEC Corporation.
  *                     All rights reserved.
+ * Copyright (c) 2022, John A. Kressel <jkressel.apps@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,39 +110,6 @@ void ukplat_time_init(void)
 	/* Enable timer */
 	generic_timer_enable();
 }
-
-// static void morello_arm_side_timer_init(void)
-// {
-// 	*MORELLO_ARM_SIDE_TIMER_CTL = MORELLO_ARM_SIDE_TIMER_CTL_ENABLE_BIT | MORELLO_ARM_SIDE_TIMER_CTL_BITS_BIT;
-// 	*MORELLO_ARM_SIDE_TIMER_PREDIVIDER = 0;
-// 	*MORELLO_ARM_SIDE_TIMER_LOAD = MORELLO_ARM_SIDE_TIMER_LOAD_INIT;
-// }
-
-// static int handle_morello_side_timer_irq(void *arg __unused)
-// {
-// 	uint64_t timerValue1 = morello_arm_side_timer_get_value();
-// 	uint64_t timerValue2 = morello_arm_side_timer_get_value();
-// 	morello_arm_side_timer_irq_disable();
-// 	morello_arm_side_timer_irq_clear();
-
-// 	// The counter is decreasing, so to get the delay of the IRQ response we substract the value of the timer at the entry of this
-// 	// function from the timer load value. Further, to account for the time needed to sample the timer, we take a second sample
-// 	// and also substract the difference beween the two points
-// 	timer_irq_delay = (morello_arm_side_timer_get_load() - timerValue1) - (timerValue1 - timerValue2);
-
-// 	return 1;
-// }
-
-// void morello_irq_delay_measurements_init(void)
-// {
-// 	int rc;
-
-// 	morello_arm_side_timer_init();
-
-// 	rc = ukplat_irq_register(IRQ_ID_MORELLO_ARM_SIDE_TIMER, handle_morello_side_timer_irq, NULL);
-// 	if (rc < 0)
-// 		UK_CRASH("Failed to register timer interrupt handler\n");
-// }
 
 /**
  * Get System Timer's counter

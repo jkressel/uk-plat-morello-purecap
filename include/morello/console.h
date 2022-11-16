@@ -2,10 +2,12 @@
 /* Copyright (c) 2015, IBM
  *           (c) 2020, NEC Laboratories Europe GmbH, NEC Corporation.
  *                     All rights reserved.
+ * Copyright (c) 2022, John A. Kressel <jkressel.apps@gmail.com>
  *
  * Author(s): Dan Williams <djwillia@us.ibm.com>
  *            Simon Kuenzer <simon.kuenzer@neclab.eu>
  *            Santiago Pagani <santiagopagani@gmail.com>
+ *            John A. Kressel <jkressel.apps@gmail.com>
  *
  * Permission to use, copy, modify, and/or distribute this software
  * for any purpose with or without fee is hereby granted, provided

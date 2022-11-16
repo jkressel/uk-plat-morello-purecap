@@ -1,9 +1,11 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
  * Authors: Santiago Pagani <santiagopagani@gmail.com>
+ * 			John A. Kressel <jkressel.apps@gmail.com>
  *
  * Copyright (c) 2020, NEC Laboratories Europe GmbH, NEC Corporation.
  *                     All rights reserved.
+ * Copyright (c) 2022, John A. Kressel <jkressel.apps@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

@@ -6,6 +6,7 @@
  * Copyright (c) 2018 Dafna Hirschfeld <dafna3@gmail.com>
  * Copyright (c) 2020, NEC Laboratories Europe GmbH, NEC Corporation.
  *                     All rights reserved.
+ * Copyright (c) 2022, John A. Kressel <jkressel.apps@gmail.com>
  *
  * Permission to use, copy, modify, and/or distribute this software
  * for any purpose with or without fee is hereby granted, provided
