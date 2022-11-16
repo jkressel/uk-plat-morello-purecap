@@ -58,7 +58,7 @@ static unsigned int serial_rx_buffer_empty(void)
 }
 
 /**
- * Set baud rate and characteristics (115200 8N1) and map to GPIO
+ * Set baud rate and characteristics (115200 8N1)
  */
 void _libmorelloplat_init_serial_console()
 {
@@ -68,6 +68,21 @@ void _libmorelloplat_init_serial_console()
     *UART0_CR = 0;         // turn off UART0
 
     *UART0_ICR = 0x7FF;    // clear interrupts
+    /*
+    *
+    * IBRD = 27
+    * FBRD = 9
+    *
+    * Calculation:
+    *   UART_CLK = 50MHz
+    *   Baud rate divisor = (50 x (10^6)) / (16 * 115200) = 27.12673611
+    *
+    *   Therefore, IBRD is 27, for the fractional part, we do the following:
+    *     ((0.12673611 * 64) + 0.5) = 9 (as integer)
+    *   So FBRD is 9
+    * 
+    *
+    */
     *UART0_IBRD = 0x1B;       // 115200 baud
     *UART0_FBRD = 0x9;
     *UART0_LCRH = 0b11<<5; // 8n1
