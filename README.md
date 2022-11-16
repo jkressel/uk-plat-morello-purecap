@@ -9,6 +9,8 @@ select/deselect the following options in the make menuconfig:
 - Architecture Selection --> deselect: Workaround for Cortex-A73 erratum
 - Platform Configuration --> select: Morello
 
+Runs with capabilities enabled in Morello 'hybrid' mode.
+
 This will build an ELF file. Once built, consult the ARM Morello bare metal documentation https://git.morello-project.org/morello/docs/-/blob/morello/mainline/standalone-baremetal-readme.rst
 
-Please note, this is still very much an early, possibly horribly broken WIP. Most features are not yet present.
+Please note, this is still very much an early WIP. Most features are not yet present.
