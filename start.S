@@ -95,17 +95,17 @@ setup_cpu:
 	ldr      x0, =vectors_el1
 	cvtp     c0, x0
   	msr      cvbar_el1, c0
-	msr      vbar_el1, x0
+//	msr      vbar_el1, x0
 
 	ldr      x0, =vectors_el2
 	cvtp     c0, x0
   	msr      cvbar_el2, c0
-	msr      vbar_el2, x0
+//	msr      vbar_el2, x0
 
 	ldr      x0, =vectors_el3
 	cvtp     c0, x0
   	msr      cvbar_el3, c0
-	msr      vbar_el3, x0
+//	msr      vbar_el3, x0
  
  
 	// Set VMID
@@ -147,6 +147,18 @@ setup_cpu:
 	cvtp    c0, x0
 	msr		celr_el3, c0
 
+	mrs     x0, cctlr_el1
+	orr     x0, x0, #(0x1 << 0)
+//	orr     x0, x0, #(0x1 << 2)
+//	orr     x0, x0, #(0x1 << 3)
+	msr     cctlr_el1, x0
+
+//	mov     x0, #(0x3 << 0)
+//	msr     cctlr_el2, x0
+
+//	mov     x0, #(0x1 << 0)
+//	msr     cctlr_el3, x0
+
 
 	eret  //jump down to el1
 
@@ -159,7 +171,7 @@ el1_entry:
 	ldr   x0, =_pagetables
 	msr   ttbr0_el1, x0   
 
-	mrs      c0, cvbar_el1       
+	//mrs      c0, cvbar_el1       
 
 
 	// Set up memory attributes
@@ -180,11 +192,18 @@ el1_entry:
 	orr   x0, x0, #(0x1 << 10)  // OGRN0=0b01  Walks to TTBR0 are Outer WB/WA
 	orr   x0, x0, #(0x3 << 12)  // SH0=0b11   Inner Shareable
 	orr   x0, x0, #(0x1 << 23)  // EPD1=0b1   Disable table walks from TTBR1
+	orr   x0, x0, #(0x1 << 41)  // Don't fault capability loads and stores
+	orr   x0, x0, #(0x1 << 44)  // Don't fault capability stores
+	orr   x0, x0, #(0x1 << 45)  // Don't fault capability loads
+	orr   x0, x0, #(0x1 << 60)  // Don't fault capability stores
+	orr   x0, x0, #(0x1 << 61)	//Don't fault capability loads
 								// TBI0=0b0
 								// TG0=0b00   4KB granule for TTBR0
 								// A1=0     TTBR0 contains the ASID
 								// AS=0     8-bit ASID
 								// IPS=0     32-bit IPA space
+
+	mov x9, x0
 	msr   tcr_el1, x0
 
 
@@ -216,7 +235,7 @@ el1_entry:
 
 
 	// [2]: 0x8000,0000 - 0xBFFF,FFFF (DRAM on the VE and Base Platform)
-	ldr      x0, =0x3000000000000405            // Entry template
+	ldr      x0, =0x3000000000000405           // Entry template
 	orr      x0, x0, #0x80000000               // 'OR' template with base physical address
 												// AP=0b00, EL1 RW, EL0 No Access
 	str      x0, [x1, #16]
@@ -230,8 +249,6 @@ el1_entry:
 	str      x0, [x1, #24]
 
 	dsb      sy
-
-
 
 
  	mov      x0, #(1 << 0)                     // M=1           Enable the stage 1 MMU
