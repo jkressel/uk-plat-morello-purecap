@@ -46,11 +46,13 @@ SECTIONS
 	.text :
 	{
 		KEEP(*(.text.boot))
-		*(.text)
+                *(.text)
 		*(.text.*)
 		*(.gnu.linkonce.t*)
 	}
+/* __FLEXOS MARKER__: insert compartment text sections here. */
 	_etext = .;
+
 
 	. = ALIGN(__PAGE_SIZE);
 	EXCEPTION_SECTIONS
@@ -58,6 +60,16 @@ SECTIONS
 	CTORTAB_SECTION
 
 	INITTAB_SECTION
+
+	/* TODO Morello this probably needs to be inserted */
+
+	_compartment_caps_start = .;
+	.compartment_caps :
+	{
+		. = ALIGN(16);
+		. += 2 * __PAGE_SIZE;
+	}
+	_compartment_caps_end = .;
 
 	/* Read-only data */
 	. = ALIGN(__PAGE_SIZE);
@@ -88,29 +100,62 @@ SECTIONS
 	}
 	_ectors = .;
 
-	. = ALIGN(__PAGE_SIZE);
-	TLS_SECTIONS
-
-	/* Read-write data that is initialized explicitly in code */
+		/* Read-write data that is initialized explicitly in code */
 	_data = .;
 	.data :
 	{
 		*(.data)
 		*(.data.*)
 		*(.gnu.linkonce.d*)
+		PROVIDE(flexos_comp0_alloc = .);
+		/* here: enough to store the compartment's allocator
+		 * FIXME derive from roundup(sizeof(struct uk_alloc)) */
+		. = . + (1000*__PAGE_SIZE);
+		. = ALIGN(0x1000);
 	}
 	_edata = .;
 
 	/* Read-write data that is not initialized explicitly in code */
 	. = ALIGN(__PAGE_SIZE);
 	__bss_start = .;
-    .bss (NOLOAD) :
+    .bss :
 	{
 		*(.bss)
 		*(.bss.*)
         *(COMMON)
     }
 	__bss_end = .;
+
+	. = ALIGN(__PAGE_SIZE);
+	TLS_SECTIONS
+
+
+	/* -- compartment data sections begin -- */
+		. = ALIGN(0x1000);
+	_comp1 = .;
+	.data_comp1 :
+        {
+		PROVIDE(flexos_comp1_alloc = .);
+		/* here: enough to store the compartment's allocator
+		 * FIXME derive from roundup(sizeof(struct uk_alloc)) */
+		. = . + (1000*__PAGE_SIZE);
+		. = ALIGN(0x1000);
+		*(.data_comp1 .data_comp1.*)
+		. = ALIGN(0x1000);
+	}
+	_ecomp1 = .;
+
+    	. = ALIGN(0x1000);
+	_bss_comp1 = .;
+	.bss_comp1 :
+        {
+		*(.bss_comp1 .bss_comp1.*)
+		. = ALIGN(0x1000);
+	}
+	_ebss_comp1 = .;
+	/* -- compartment data sections end -- */
+
+
 
     . = ALIGN(__PAGE_SIZE);
 	. = ALIGN(16);

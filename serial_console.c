@@ -26,6 +26,7 @@
  */
 
 #include <morello/sysregs.h>
+#include <flexos/impl/morello.h>
 
 /* PL011 UART registers */
 #define UART0_DR        ((volatile unsigned int*)(0x2A400000+0x0))
@@ -39,6 +40,8 @@
 
 static char prev_sent_char = '\0';
 
+void *__capability uart_cap;
+
 static void wait_cycles(unsigned int n)
 {
     if (n) {
@@ -48,9 +51,20 @@ static void wait_cycles(unsigned int n)
 	}
 }
 
-static unsigned int serial_tx_buffer_full(void)
+unsigned int serial_tx_buffer_full(void)
 {
-	return *UART0_FR&0x20;
+//	return *UART0_FR&0x20;
+  uint32_t result = 0;
+  __asm__ volatile(
+    "mov w0, %2 \n"
+    "ldr w1, [%0, #0x18]\n"
+    "and w1, w1, w0\n"
+    "str w1, [%1]\n"
+    :
+    : "r"(uart_cap), "r"(&result), "i"(0x20)
+    : "x0", "x1"
+  );
+  return result;
 }
 
 static unsigned int serial_rx_buffer_empty(void)
@@ -88,6 +102,9 @@ void _libmorelloplat_init_serial_console()
     *UART0_FBRD = 0x9;
     *UART0_LCRH = 0b11<<5; // 8n1
     *UART0_CR = 0x301;     // enable Tx, Rx, FIFO
+
+    morello_create_capability_from_ptr((uintptr_t)0x2A400000, (uintptr_t)0x60, ((uintptr_t *)(&(uart_cap))));
+
 }
 
 /**
@@ -104,7 +121,14 @@ void _libmorelloplat_serial_putc(char c)
 	} while (serial_tx_buffer_full());
 
     // Write the character to the buffer
-    *UART0_DR = c;
+//    *UART0_DR = c;
+  __asm__ volatile(
+    "mov x0, %1 \n"
+    "str x0, [%0]\n"
+    :
+    : "r"(uart_cap), "r"(c)
+    : "x0"
+  );
 	prev_sent_char = c;
 }
 

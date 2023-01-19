@@ -149,6 +149,7 @@ setup_cpu:
 
 	mrs     x0, cctlr_el1
 	orr     x0, x0, #(0x1 << 0)
+	bic 	x0, x0, #(0x1 << 7) //don't want return caps to be sealed, you may want this behaviour enabled though
 //	orr     x0, x0, #(0x1 << 2)
 //	orr     x0, x0, #(0x1 << 3)
 	msr     cctlr_el1, x0
