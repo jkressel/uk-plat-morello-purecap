@@ -31,41 +31,106 @@
 	.macro handle_invalid_entry type
 	kernel_entry
 	stp x1, x0, [sp, #-16]
+	cfhi x1, c1
+	cfhi x0, c0
+	stp x1, x0, [sp, #-32]
 	ldr x0, =(exception_regs_a64)
 	ldr x1, [sp, #-8]
 	str x1, [x0, #48]
-	ldr x1, [sp, #-16]
+	ldr x1, [sp, #-24]
 	str x1, [x0, #56]
-	str x2, [x0, #64]
-	str x3, [x0, #72]
-	str x4, [x0, #80]
-	str x5, [x0, #88]
-	str x6, [x0, #96]
-	str x7, [x0, #104]
-	str x8, [x0, #112]
-	str x9, [x0, #120]
-	str x10, [x0, #128]
-	str x11, [x0, #136]
-	str x12, [x0, #144]
-	str x13, [x0, #152]
-	str x14, [x0, #160]
-	str x15, [x0, #168]
-	str x16, [x0, #176]
-	str x17, [x0, #184]
-	str x18, [x0, #192]
-	str x19, [x0, #200]
-	str x20, [x0, #208]
-	str x21, [x0, #216]
-	str x22, [x0, #224]
-	str x23, [x0, #232]
-	str x24, [x0, #240]
-	str x25, [x0, #248]
-	str x26, [x0, #256]
-	str x27, [x0, #264]
-	str x28, [x0, #272]
-	str x29, [x0, #280]
-	str x30, [x0, #288]
-	str x31, [x0, #296]
+	ldr x1, [sp, #-16]
+	str x1, [x0, #64]
+	ldr x1, [sp, #-32]
+	str x1, [x0, #72]
+	cfhi x1, c2
+	str x1, [x0, #88]
+	str x2, [x0, #80]
+	cfhi x1, c3
+	str x1, [x0, #104]
+	str x3, [x0, #96]
+	cfhi x1, c4
+	str x1, [x0, #120]
+	str x4, [x0, #112]
+	cfhi x1, c5
+	str x1, [x0, #136]
+	str x5, [x0, #128]
+	cfhi x1, c6
+	str x1, [x0, #152]
+	str x6, [x0, #144]
+	cfhi x1, c7
+	str x1, [x0, #168]
+	str x7, [x0, #160]
+	cfhi x1, c8
+	str x1, [x0, #184]
+	str x8, [x0, #176]
+	cfhi x1, c9
+	str x1, [x0, #200]
+	str x9, [x0, #192]
+	cfhi x1, c10
+	str x1, [x0, #216]
+	str x10, [x0, #208]
+	cfhi x1, c11
+	str x1, [x0, #232]
+	str x11, [x0, #216]
+	cfhi x1, c12
+	str x1, [x0, #248]
+	str x12, [x0, #240]
+	cfhi x1, c13
+	str x1, [x0, #264]
+	str x13, [x0, #256]
+	cfhi x1, c14
+	str x1, [x0, #280]
+	str x14, [x0, #272]
+	cfhi x1, c15
+	str x1, [x0, #296]
+	str x15, [x0, #288]
+	cfhi x1, c16
+	str x1, [x0, #312]
+	str x16, [x0, #304]
+	cfhi x1, c17
+	str x1, [x0, #328]
+	str x17, [x0, #320]
+	cfhi x1, c18
+	str x1, [x0, #344]
+	str x18, [x0, #336]
+	cfhi x1, c19
+	str x1, [x0, #360]
+	str x19, [x0, #352]
+	cfhi x1, c20
+	str x1, [x0, #376]
+	str x20, [x0, #368]
+	cfhi x1, c21
+	str x1, [x0, #392]
+	str x21, [x0, #384]
+	cfhi x1, c22
+	str x1, [x0, #408]
+	str x22, [x0, #400]
+	cfhi x1, c23
+	str x1, [x0, #424]
+	str x23, [x0, #416]
+	cfhi x1, c24
+	str x1, [x0, #440]
+	str x24, [x0, #432]
+	cfhi x1, c25
+	str x1, [x0, #456]
+	str x25, [x0, #448]
+	cfhi x1, c26
+	str x1, [x0, #472]
+	str x26, [x0, #464]
+	cfhi x1, c27
+	str x1, [x0, #488]
+	str x27, [x0, #480]
+	cfhi x1, c28
+	str x1, [x0, #504]
+	str x28, [x0, #496]
+	cfhi x1, c29
+	str x1, [x0, #520]
+	str x29, [x0, #512]
+	cfhi x1, c30
+	str x1, [x0, #536]
+	str x30, [x0, #528]
+	str x31, [x0, #544]
 	mrs x1, esr_el1
 	str x1, [x0]
 	mrs x1, elr_el1
