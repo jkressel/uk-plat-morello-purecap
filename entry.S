@@ -30,8 +30,57 @@
 
 	.macro handle_invalid_entry type
 	kernel_entry
+	stp x1, x0, [sp, #-16]
+	ldr x0, =(exception_regs_a64)
+	ldr x1, [sp, #-8]
+	str x1, [x0, #48]
+	ldr x1, [sp, #-16]
+	str x1, [x0, #56]
+	str x2, [x0, #64]
+	str x3, [x0, #72]
+	str x4, [x0, #80]
+	str x5, [x0, #88]
+	str x6, [x0, #96]
+	str x7, [x0, #104]
+	str x8, [x0, #112]
+	str x9, [x0, #120]
+	str x10, [x0, #128]
+	str x11, [x0, #136]
+	str x12, [x0, #144]
+	str x13, [x0, #152]
+	str x14, [x0, #160]
+	str x15, [x0, #168]
+	str x16, [x0, #176]
+	str x17, [x0, #184]
+	str x18, [x0, #192]
+	str x19, [x0, #200]
+	str x20, [x0, #208]
+	str x21, [x0, #216]
+	str x22, [x0, #224]
+	str x23, [x0, #232]
+	str x24, [x0, #240]
+	str x25, [x0, #248]
+	str x26, [x0, #256]
+	str x27, [x0, #264]
+	str x28, [x0, #272]
+	str x29, [x0, #280]
+	str x30, [x0, #288]
+	str x31, [x0, #296]
+	mrs x1, esr_el1
+	str x1, [x0]
+	mrs x1, elr_el1
+	str x1, [x0, #8]
+	mrs x1, spsr_el1
+	str x1, [x0, #16]
+	mrs x1, cctlr_el1
+	str x1, [x0, #24]
+	mrs x1, cpacr_el1
+	str x1, [x0, #32]
+	mrs x1, far_el1
+	str x1, [x0, #40]
+	mov x1, x0
 	mov	x0, #\type
-	bl	show_invalid_entry_message
+	bl	dump_registers
 	b	err_hang
 	.endm
 
@@ -299,11 +348,12 @@ error_invalid_el0_32:
 	handle_invalid_entry  ERROR_INVALID_EL0_32
 
 el1_sync:
-	kernel_entry
-	mrs	x0, ESR_EL1
-	mrs	x1, FAR_EL1
-	bl	show_invalid_entry_message_el1_sync
-	b	err_hang
+	handle_invalid_entry  SYNC_INVALID_EL1h
+//	kernel_entry
+//	mrs	x0, ESR_EL1
+//	mrs	x1, FAR_EL1
+//	bl	show_invalid_entry_message_el1_sync
+//	b	err_hang
 
 el1_irq:
 	kernel_entry 

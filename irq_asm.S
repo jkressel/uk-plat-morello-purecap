@@ -27,8 +27,9 @@
 
 .globl irq_vector_init
 irq_vector_init:
-	adr	x0, vectors_el1		// load VBAR_EL1 with virtual
-	msr	vbar_el1, x0		// vector table address
+	ldr      x0, =vectors_el1
+	cvtp     c0, x0
+  	msr      cvbar_el1, c0
 	ret
 
 .globl enable_irq

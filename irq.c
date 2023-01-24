@@ -46,6 +46,8 @@
 
 static irq_handler_func_t irq_handlers[IRQS_MAX];
 
+struct __a64regs exception_regs_a64;
+
 int ukplat_irq_register(unsigned long irq, irq_handler_func_t func, void *arg __unused)
 {
 	switch (irq) {
@@ -78,6 +80,48 @@ int ukplat_irq_init(struct uk_alloc *a __unused)
 void show_invalid_entry_message(int type)
 {
 	printf("IRQ: %d\n", type);
+}
+
+void dump_registers(int type, struct __a64regs *regs) {
+	printf("IRQ: %d\n", type);
+	printf("x0: 0x%x\n", regs->x0);
+	printf("x1: 0x%x\n", regs->x1);
+	printf("x2: 0x%x\n", regs->x2);
+	printf("x3: 0x%x\n", regs->x3);
+	printf("x4: 0x%x\n", regs->x4);
+	printf("x5: 0x%x\n", regs->x5);
+	printf("x6: 0x%x\n", regs->x6);
+	printf("x7: 0x%x\n", regs->x7);
+	printf("x8: 0x%x\n", regs->x8);
+	printf("x9: 0x%x\n", regs->x9);
+	printf("x10: 0x%x\n", regs->x10);
+	printf("x11: 0x%x\n", regs->x11);
+	printf("x12: 0x%x\n", regs->x12);
+	printf("x13: 0x%x\n", regs->x13);
+	printf("x14: 0x%x\n", regs->x14);
+	printf("x15: 0x%x\n", regs->x15);
+	printf("x16: 0x%x\n", regs->x16);
+	printf("x17: 0x%x\n", regs->x17);
+	printf("x18: 0x%x\n", regs->x18);
+	printf("x19: 0x%x\n", regs->x19);
+	printf("x20: 0x%x\n", regs->x20);
+	printf("x21: 0x%x\n", regs->x21);
+	printf("x22: 0x%x\n", regs->x22);
+	printf("x23: 0x%x\n", regs->x23);
+	printf("x24: 0x%x\n", regs->x24);
+	printf("x25: 0x%x\n", regs->x25);
+	printf("x26: 0x%x\n", regs->x26);
+	printf("x27: 0x%x\n", regs->x27);
+	printf("x28: 0x%x\n", regs->x28);
+	printf("fp: 0x%x\n", regs->x29);
+	printf("lr: 0x%x\n", regs->x30);
+	printf("sp: 0x%x\n", regs->x31);
+	printf("esr_el1: 0x%x\n", regs->esr_el1);
+	printf("elr_el1: 0x%x\n", regs->elr_el1);
+	printf("spsr_el1: 0x%x\n", regs->spsr_el1);
+	printf("cctlr_el1: 0x%x\n", regs->cctlr);
+	printf("cpacr_el1: 0x%x\n", regs->cpacr_el1);
+	printf("far_el1: 0x%x\n", regs->far_el1);
 }
 
 void show_invalid_entry_message_el1_sync(uint64_t esr_el, uint64_t far_el)
