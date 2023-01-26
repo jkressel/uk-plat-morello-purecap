@@ -143,6 +143,9 @@ setup_cpu:
 	ldr		x0, =(0x05)
 	msr		spsr_el3, x0
 
+	ldr		x0, =(0x05)
+	msr		spsr_el1, x0
+
 	ldr		x0, =(el1_entry)
 	cvtp    c0, x0
 	msr		celr_el3, c0

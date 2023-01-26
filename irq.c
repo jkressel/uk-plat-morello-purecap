@@ -115,7 +115,7 @@ void dump_registers(int type, struct __a64regs *regs) {
 	printf("c28 lo: 0x%x hi: 0x%x\n", regs->x28, regs->x28_hi);
 	printf("fp lo: 0x%x hi: 0x%x\n", regs->x29, regs->x29_hi);
 	printf("lr lo: 0x%x hi: 0x%x\n", regs->x30, regs->x30_hi);
-	printf("sp: 0x%x %x\n", regs->x31);
+	printf("sp: 0x%x\n", regs->x31);
 	printf("esr_el1: 0x%x\n", regs->esr_el1);
 	printf("elr_el1: 0x%x\n", regs->elr_el1);
 	printf("spsr_el1: 0x%x\n", regs->spsr_el1);
