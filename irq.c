@@ -63,6 +63,106 @@ int ukplat_irq_register(unsigned long irq, irq_handler_func_t func, void *arg __
 	return 0;
 }
 
+void ukplat_morello_print_exception_reason(uint32_t esr) {
+	switch (esr & 0x3F) {
+		case ADDR_SZ_FLT_L0:
+			printf("Address size fault, level 0 of translation or translation table base register\n");
+			break;
+		case ADDR_SZ_FLT_L1:
+			printf("Address size fault, level 1\n");
+			break;
+		case ADDR_SZ_FLT_L2:
+			printf("Address size fault, level 2\n");
+			break;
+		case ADDR_SZ_FLT_L3:
+			printf("Address size fault, level 3\n");
+			break;
+		case TRANS_FLT_L0:
+			printf("Translation fault, level 0\n");
+			break;
+		case TRANS_FLT_L1:
+			printf("Translation fault, level 1\n");
+			break;
+		case TRANS_FLT_L2:
+			printf("Translation fault, level 2\n");
+			break;
+		case TRANS_FLT_L3:
+			printf("Translation fault, level 3\n");
+			break;
+		case ACS_FLG_FLT_L1:
+			printf("Access flag fault, level 1\n");
+			break;
+		case ACS_FLG_FLT_L2:
+			printf("Access flag fault, level 2\n");
+			break;
+		case ACS_FLG_FLT_L3:
+			printf("Access flag fault, level 3\n");
+			break;
+		case PERM_FLT_L1:
+			printf("Permission fault, level 1\n");
+			break;
+		case PERM_FLT_L2:
+			printf("Permission fault, level 2\n");
+			break;
+		case PERM_FLT_L3:
+			printf("Permission fault, level 3\n");
+			break;
+		case SYNC_EXT_ABRT_NOT_TTW:
+			printf("Synchronous External abort, not on translation table walk\n");
+			break;
+		case SYNC_EXT_ABRT_TTW_L0:
+			printf("Synchronous External abort, on translation table walk, level 0\n");
+			break;
+		case SYNC_EXT_ABRT_TTW_L1:
+			printf("Synchronous External abort, on translation table walk, level 1\n");
+			break;
+		case SYNC_EXT_ABRT_TTW_L2:
+			printf("Synchronous External abort, on translation table walk, level 2\n");
+			break;
+		case SYNC_EXT_ABRT_TTW_L3:
+			printf("Synchronous External abort, on translation table walk, level 3\n");
+			break;
+		case SYNC_PAR_ECC_ERR_MEM_ACC_NOT_TTW:
+			printf("Synchronous parity or ECC error on memory access, not on translation table walk\n");
+			break;
+		case SYNC_PAR_ECC_ERR_MEM_ACC_TTW_L0:
+			printf("Synchronous parity or ECC error on memory access on translation table walk, level 0\n");
+			break;
+		case SYNC_PAR_ECC_ERR_MEM_ACC_TTW_L1:
+			printf("Synchronous parity or ECC error on memory access on translation table walk, level 1\n");
+			break;
+		case SYNC_PAR_ECC_ERR_MEM_ACC_TTW_L2:
+			printf("Synchronous parity or ECC error on memory access on translation table walk, level 2\n");
+			break;
+		case SYNC_PAR_ECC_ERR_MEM_ACC_TTW_L3:
+			printf("Synchronous parity or ECC error on memory access on translation table walk, level 3\n");
+			break;
+		case CAP_TAG_FLT:
+			printf("Capability tag fault\n");
+			break;
+		case CAP_SEALED_FLT:
+			printf("Capability sealed fault\n");
+			break;
+		case CAP_BOUND_FLT:
+			printf("Capability bound fault\n");
+			break;
+		case CAP_PERM_FLT:
+			printf("Capability permission fault\n");
+			break;
+		case PG_TBL_LC_SC:
+			printf("Page table LC or SC permission violation fault\n");
+			break;
+		case TLB_CONFLICT_ABRT:
+			printf("TLB conflict abort\n");
+			break;
+		case UNSUPPORTED_ATOMIC_HARDWARE_UPDATE_FLT:
+			printf("Unsupported atomic hardware update fault, if the implementation includes xARMv8.1-TTHM\n");
+			break;
+		default:
+			printf("Exception type not handled here, I suggest you take a look at the ESR bits and then consult the ISA Manual.");
+	}
+}
+
 int ukplat_irq_init(struct uk_alloc *a __unused)
 {
 	for (unsigned int i = 0; i < IRQS_MAX; i++) {
@@ -122,6 +222,7 @@ void dump_registers(int type, struct __a64regs *regs) {
 	printf("cctlr_el1: 0x%x\n", regs->cctlr);
 	printf("cpacr_el1: 0x%x\n", regs->cpacr_el1);
 	printf("far_el1: 0x%x\n", regs->far_el1);
+	ukplat_morello_print_exception_reason(regs->esr_el1);
 }
 
 void show_invalid_entry_message_el1_sync(uint64_t esr_el, uint64_t far_el)

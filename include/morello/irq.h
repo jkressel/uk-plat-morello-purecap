@@ -143,4 +143,39 @@ struct __a64regs {
 
 extern struct __a64regs exception_regs_a64;
 
+#define ADDR_SZ_FLT_L0 0x0
+#define ADDR_SZ_FLT_L1 0x1
+#define ADDR_SZ_FLT_L2 0x2
+#define ADDR_SZ_FLT_L3 0x3
+#define TRANS_FLT_L0 0x4
+#define TRANS_FLT_L1 0x5
+#define TRANS_FLT_L2 0x6
+#define TRANS_FLT_L3 0x7
+#define ACS_FLG_FLT_L1 0x9
+#define ACS_FLG_FLT_L2 0xA
+#define ACS_FLG_FLT_L3 0xB
+#define PERM_FLT_L1 0xD
+#define PERM_FLT_L2 0xE
+#define PERM_FLT_L3 0xF
+#define SYNC_EXT_ABRT_NOT_TTW 0x10
+#define SYNC_EXT_ABRT_TTW_L0 0x14
+#define SYNC_EXT_ABRT_TTW_L1 0x15
+#define SYNC_EXT_ABRT_TTW_L2 0x16
+#define SYNC_EXT_ABRT_TTW_L3 0x17
+#define SYNC_PAR_ECC_ERR_MEM_ACC_NOT_TTW 0x18
+#define SYNC_PAR_ECC_ERR_MEM_ACC_TTW_L0 0x1C
+#define SYNC_PAR_ECC_ERR_MEM_ACC_TTW_L1 0x1D
+#define SYNC_PAR_ECC_ERR_MEM_ACC_TTW_L2 0x1E
+#define SYNC_PAR_ECC_ERR_MEM_ACC_TTW_L3 0x1F
+#define CAP_TAG_FLT 0x28
+#define CAP_SEALED_FLT 0x29
+#define CAP_BOUND_FLT 0x2A
+#define CAP_PERM_FLT 0x2B
+#define PG_TBL_LC_SC 0x2C
+#define TLB_CONFLICT_ABRT 0x30
+#define UNSUPPORTED_ATOMIC_HARDWARE_UPDATE_FLT 0x31
+
+
+
+
 #endif /* __MORELLO_IRQ_H__ */

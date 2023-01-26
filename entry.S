@@ -130,7 +130,8 @@
 	cfhi x1, c30
 	str x1, [x0, #536]
 	str x30, [x0, #528]
-	str x31, [x0, #544]
+	mov x1, sp
+	str x1, [x0, #544]
 	mrs x1, esr_el1
 	str x1, [x0]
 	mrs x1, elr_el1
@@ -146,7 +147,7 @@
 	mov x1, x0
 	mov	x0, #\type
 	bl	dump_registers
-	b	err_hang
+	wfi
 	.endm
 
 	.macro	ventry	label
