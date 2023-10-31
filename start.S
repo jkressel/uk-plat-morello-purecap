@@ -33,22 +33,14 @@
 #include <morello/mmu.h>
 #include <uk/config.h>
 
-.section ".text.boot"
-.global _start
-_start:
-    // read cpu id, stop slave cores
-//	ldr		x0, =0x3F003000
-//	ldr		w10, [x0, #4]
-//	ldr		w11, [x0, #8]
-//	ldr		w12, [x0, #4]
-//	ldr		w13, [x0, #8]
-//    mrs     x1, mpidr_el1
-//    and     x1, x1, #3
-//    cbz     x1, master
+//.section ".text.boot"
+.global __start
+.align 16
+__start:
 b setup_cpu
 
-hang:  wfe
-    b       hang
+//hang:  wfe
+//    b       hang
 
 
 setup_cpu:
@@ -220,13 +212,14 @@ el1_entry:
 	//Set up blocks
 
 	ldr   x1, =_pagetables
+	cvtp  c1, x1
 
 
 	// [0]: 0x0000,0000 - 0x3FFF,FFFF
 	ldr      x0, =0x00600000000000409          // Entry template
 												// Don't need to OR in address, as it is 0
 												// AP=0b00, EL1 RW, EL0 No Access
-	str      x0, [x1]
+	str      x0, [c1]
 
 
 	
@@ -234,7 +227,7 @@ el1_entry:
 	ldr      x0, =0x00600000000000409          // Entry template
 	orr      x0, x0, #0x40000000               // 'OR' template with base physical address
 												// AP=0b00, EL1 RW, EL0 No Access
-	str      x0, [x1, #8]
+	str      x0, [c1, #8]
 
 
 
@@ -242,7 +235,7 @@ el1_entry:
 	ldr      x0, =0x3000000000000405           // Entry template
 	orr      x0, x0, #0x80000000               // 'OR' template with base physical address
 												// AP=0b00, EL1 RW, EL0 No Access
-	str      x0, [x1, #16]
+	str      x0, [c1, #16]
 
 
 
@@ -250,7 +243,7 @@ el1_entry:
 	ldr      x0, =0x3000000000000405            // Entry template
 	orr      x0, x0, #0xC0000000               // 'OR' template with base physical address
 												// AP=0b00, EL1 RW, EL0 No Access
-	str      x0, [x1, #24]
+	str      x0, [c1, #24]
 
 	dsb      sy
 
@@ -274,32 +267,64 @@ el1_entry:
 	nop
 	nop
 
-
 	//setup stack pointer to use
-	msr             SPSel, #1
+	msr             SPSel, #0
 	ldr             x1, =__stack_end
 	and             x1, x1, #-16
-	mov             sp, x1
+	cvtp            c1, x1
+	mov             csp, c1
 
 
 
-	clear_bss_start:
-		// Clear bss
-		ldr     x1, =__bss_start
-		ldr     w2, =__bss_size
-	clear_bss_loop:
-		cbz     w2, clear_bss_done
-		str     xzr, [x1], #8
-		sub     w2, w2, #1
-		cbnz    w2, clear_bss_loop
-	clear_bss_done:
-
+//	clear_bss_start:
+//		// Clear bss
+//		ldr     x1, =__start_bss
+//		cvtp    c1, x1
+//		ldr     w2, =__bss_size
+//	clear_bss_loop:
+//		cbz     w2, clear_bss_done
+//		str     xzr, [c1], #8
+//		sub     w2, w2, #1
+//		cbnz    w2, clear_bss_loop
+//	clear_bss_done:
 
 
 jump_to_C:
 	//load c entry point
 	ldr		x4, =_libmorelloplat_entry
-	br 		x4
+	cvtp    c4, x4
+	br 		c4
 
 	// As a failsafe, we also hang the main core
-    b       hang
+//    b       hang
+
+
+  .weak   __cap_relocs_start
+  .weak   __cap_relocs_end
+
+  .align 4
+.LCRStart:
+  .dword __cap_relocs_start
+  .globl __getCapRelocsStart
+  .type  __getCapRelocsStart,@function
+  .align 2
+__getCapRelocsStart:
+  adr c0, .LCRStart
+  ldr x0, [c0]
+  mrs c1, DDC
+  scvalue c0, c1, x0
+  ret
+
+  .align 4
+.LCREnd:
+  .dword __cap_relocs_end
+  .globl __getCapRelocsEnd
+  .type  __getCapRelocsEnd,@function
+  .align 2
+__getCapRelocsEnd:
+  adr c0, .LCREnd
+  ldr x0, [c0]
+  mrs c1, DDC
+  scvalue c0, c1, x0
+  ret
+

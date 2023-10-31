@@ -26,21 +26,35 @@
  */
 
 #include <morello/sysregs.h>
-#include <flexos/impl/morello.h>
+#include <stdint.h>
 
 /* PL011 UART registers */
-#define UART0_DR        ((volatile unsigned int*)(0x2A400000+0x0))
-#define UART0_FR        ((volatile unsigned int*)(0x2A400000+0x18))
-#define UART0_IBRD      ((volatile unsigned int*)(0x2A400000+0x24))
-#define UART0_FBRD      ((volatile unsigned int*)(0x2A400000+0x28))
-#define UART0_LCRH      ((volatile unsigned int*)(0x2A400000+0x2C))
-#define UART0_CR        ((volatile unsigned int*)(0x2A400000+0x30))
-#define UART0_IMSC      ((volatile unsigned int*)(0x2A400000+0x38))
-#define UART0_ICR       ((volatile unsigned int*)(0x2A400000+0x44))
+#define UART0_DR        ((int)(0))
+#define UART0_FR        ((int)(2))
+#define UART0_IBRD      ((int)(4))
+#define UART0_FBRD      ((int)(5))
+#define UART0_LCRH      ((int)(6))
+#define UART0_CR        ((int)(7))
+#define UART0_IMSC      ((int)(9))
+#define UART0_ICR       ((int)(12))
+
+volatile unsigned int* uart_cap;
+
+// #define morello_create_capability_from_ptr(ptr, size, store_to_ptr)	\
+// 	__asm__ volatile(	\
+// 		"cvtp c0, %0\n"	\
+// 		"scbnds c0, c0, %2\n"	\
+// 		"mov x1, #(1<<1)\n"	\
+// 		"clrperm c0, c0, x1\n"	\
+// 		"str c0, [%1]\n"	\
+// 		:	\
+// 		: "r"((uintptr_t *)(ptr)), "r"((uintptr_t *)(store_to_ptr)), "r"(size)	\
+// 		: "c0", "x1", "memory"	\
+// 	)
 
 static char prev_sent_char = '\0';
 
-void *__capability uart_cap;
+//void *__capability uart_cap;
 
 static void wait_cycles(unsigned int n)
 {
@@ -53,23 +67,23 @@ static void wait_cycles(unsigned int n)
 
 unsigned int serial_tx_buffer_full(void)
 {
-//	return *UART0_FR&0x20;
-  uint32_t result = 0;
-  __asm__ volatile(
-    "mov w0, %2 \n"
-    "ldr w1, [%0, #0x18]\n"
-    "and w1, w1, w0\n"
-    "str w1, [%1]\n"
-    :
-    : "r"(uart_cap), "r"(&result), "i"(0x20)
-    : "x0", "x1"
-  );
-  return result;
+	return *(uart_cap+UART0_FR)&0x20;
+  // uint32_t result = 0;
+  // __asm__ volatile(
+  //   "mov w0, %2 \n"
+  //   "ldr w1, [%0, #0x18]\n"
+  //   "and w1, w1, w0\n"
+  //   "str w1, [%1]\n"
+  //   :
+  //   : "r"(uart_cap), "r"(&result), "i"(0x20)
+  //   : "x0", "x1"
+  // );
+  // return result;
 }
 
 static unsigned int serial_rx_buffer_empty(void)
 {
-	return *UART0_FR&0x10;
+	return *(uart_cap+UART0_FR)&0x10;
 }
 
 /**
@@ -77,12 +91,14 @@ static unsigned int serial_rx_buffer_empty(void)
  */
 void _libmorelloplat_init_serial_console()
 {
-    register unsigned int r;
+    unsigned int* defcap = __builtin_cheri_global_data_get();
+    defcap = __builtin_cheri_offset_set(defcap, 0x2A400000);
+    uart_cap = (unsigned int*)__builtin_cheri_bounds_set(defcap, 13*sizeof(int));
 
     /* initialize UART */
-    *UART0_CR = 0;         // turn off UART0
+    *(uart_cap+UART0_CR) = 0; // turn off UART0
 
-    *UART0_ICR = 0x7FF;    // clear interrupts
+    *(uart_cap+UART0_ICR) = 0x7FF;    // clear interrupts
     /*
     *
     * IBRD = 27
@@ -98,12 +114,12 @@ void _libmorelloplat_init_serial_console()
     * 
     *
     */
-    *UART0_IBRD = 0x1B;       // 115200 baud
-    *UART0_FBRD = 0x9;
-    *UART0_LCRH = 0b11<<5; // 8n1
-    *UART0_CR = 0x301;     // enable Tx, Rx, FIFO
+    *(uart_cap+UART0_IBRD) = 0x1B;       // 115200 baud
+    *(uart_cap+UART0_FBRD) = 0x9;
+    *(uart_cap+UART0_LCRH) = 0b11<<5; // 8n1
+    *(uart_cap+UART0_CR) = 0x301;     // enable Tx, Rx, FIFO
 
-    morello_create_capability_from_ptr((uintptr_t)0x2A400000, (uintptr_t)0x60, ((uintptr_t *)(&(uart_cap))));
+    //morello_create_capability_from_ptr((uintptr_t)0x2A400000, (uintptr_t)0x60, ((uintptr_t *)(&(uart_cap))));
 
 }
 
@@ -121,14 +137,14 @@ void _libmorelloplat_serial_putc(char c)
 	} while (serial_tx_buffer_full());
 
     // Write the character to the buffer
-//    *UART0_DR = c;
-  __asm__ volatile(
-    "mov x0, %1 \n"
-    "str x0, [%0]\n"
-    :
-    : "r"(uart_cap), "r"(c)
-    : "x0"
-  );
+    *(uart_cap+UART0_DR) = c;
+  // __asm__ volatile(
+  //   "mov x0, %1 \n"
+  //   "str x0, [%0]\n"
+  //   :
+  //   : "r"(uart_cap), "r"(c)
+  //   : "x0"
+  // );
 	prev_sent_char = c;
 }
 
@@ -141,6 +157,6 @@ int  _libmorelloplat_serial_getc(void)
 		return -1;
 
     char r;
-    r = (char)(*UART0_DR);
+    r = (char)(*(uart_cap+UART0_DR));
     return (int)r;
 }

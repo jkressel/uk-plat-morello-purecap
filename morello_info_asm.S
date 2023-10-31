@@ -40,7 +40,7 @@ get_sp:
 
 .globl get_sp_start
 get_sp_start:
-    ldr     x1, =_start
+    ldr     x1, =__start
     ret
 
 .globl get_el
@@ -61,17 +61,17 @@ get_sctlr_el1:
 
 .globl get_unikraft_text_size
 get_unikraft_text_size:
-	ldr x0, =_text
-	ldr x1, =_ectors
+	ldr x0, =__start_text
+	ldr x1, =__stop_ctors
 	sub x0, x1, x0
 	ret
 
 .globl get_unikraft_data_size
 get_unikraft_data_size:
-	ldr x0, =_data
-	ldr x1, =_edata
+	ldr x0, =__start_data
+	ldr x1, =__stop_data
 	sub x0, x1, x0
-	ldr x1, =_tls_start
+	ldr x1, =_tls_begin
 	ldr x2, =_etdata
 	sub x1, x2, x1
 	add x0, x0, x1
@@ -79,8 +79,8 @@ get_unikraft_data_size:
 
 .globl get_unikraft_bss_size
 get_unikraft_bss_size:
-	ldr x0, =__bss_start
-	ldr x1, =__bss_end
+	ldr x0, =__start_bss
+	ldr x1, =__stop_bss
 	sub x0, x1, x0
 	ldr x1, =_etdata
 	ldr x2, =_tls_end

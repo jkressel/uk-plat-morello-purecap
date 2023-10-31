@@ -39,6 +39,7 @@
 #define __MORELLO_IRQ_H__
 
 #include <morello/sysregs.h>
+#include <stdint.h>
 
 #define IRQ_BASIC_PENDING	((volatile __u32 *)(MMIO_BASE+0x0000B200))
 #define IRQ_PENDING_1		((volatile __u32 *)(MMIO_BASE+0x0000B204))

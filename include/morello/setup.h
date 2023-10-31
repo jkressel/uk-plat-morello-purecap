@@ -39,5 +39,14 @@
 
 #include <stdint.h>
 
+typedef struct {
+  uint64_t cap_location;
+  uint64_t base;
+  uint64_t offset;
+  uint64_t size;
+  uint64_t permissions;
+} reloc;
+
+
 
 #endif /* __MORELLO_SETUP_H__ */

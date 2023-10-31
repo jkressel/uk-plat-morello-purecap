@@ -19,8 +19,8 @@ LIBMORELLOPLAT_CINCLUDES-y         += -I$(UK_PLAT_DRIVERS_BASE)/include
 #CC = ~/llvm-project-releases/bin/clang
 #AS = ~/llvm-project-releases/bin/clang
 LIBMORELLOPLAT_ASFLAGS             += -DMORELLOPLAT
-LIBMORELLOPLAT_ASFLAGS             += -g -target aarch64-none-elf -march=morello -isysroot="~/morello_toolchain/llvm-project-releases/aarch64-none-elf/" -B~/morello_toolchain/llvm-project-releases/bin/
-LIBMORELLOPLAT_CFLAGS              += -g -DMORELLOPLAT -march=morello
+#LIBMORELLOPLAT_ASFLAGS             += -g -target aarch64-none-elf -march=morello
+LIBMORELLOPLAT_CFLAGS              += -g -DMORELLOPLAT
 LIBMORELLOPLAT_CXXFLAGS            += -g -DMORELLOPLAT
 
 ##

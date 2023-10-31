@@ -34,7 +34,7 @@
 
 #include <uk/plat/io.h>
 
-__paddr_t ukplat_virt_to_phys(const volatile void *address)
+__phys_addr ukplat_virt_to_phys(const volatile void *address)
 {
-	return (__paddr_t)address;
+	return (__phys_addr)address;
 }

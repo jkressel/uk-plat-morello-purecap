@@ -29,9 +29,7 @@
 #define RAM_BASE_ADDR	0x80000000
 #define DTB_RESERVED_SIZE 0x100000
 
-OUTPUT_FORMAT("elf64-littleaarch64")
-OUTPUT_ARCH(aarch64)
-ENTRY(_start)
+ENTRY(__start)
 
 SECTIONS
 {
@@ -42,7 +40,6 @@ SECTIONS
 	. = . + DTB_RESERVED_SIZE;
 
 	/* Code */
-	_text = .;
 	.text :
 	{
 		KEEP(*(.text.boot))
@@ -50,8 +47,10 @@ SECTIONS
 		*(.text.*)
 		*(.gnu.linkonce.t*)
 	}
+
+	__start_text = ADDR(.text);
+	__stop_text = ALIGN(__start_text + SIZEOF(.text), 128);
 /* __FLEXOS MARKER__: insert compartment text sections here. */
-	_etext = .;
 
 
 	. = ALIGN(__PAGE_SIZE);
@@ -61,19 +60,8 @@ SECTIONS
 
 	INITTAB_SECTION
 
-	/* TODO Morello this probably needs to be inserted */
-
-	_compartment_caps_start = .;
-	.compartment_caps :
-	{
-		. = ALIGN(16);
-		. += 2 * __PAGE_SIZE;
-	}
-	_compartment_caps_end = .;
-
 	/* Read-only data */
 	. = ALIGN(__PAGE_SIZE);
-	_rodata = .;
 	.rodata :
 	{
 		*(.rodata)
@@ -82,26 +70,30 @@ SECTIONS
 	}
 	_erodata = .;
 
+	__start_rodata = ADDR(.rodata);
+	__stop_rodata = ALIGN(__start_rodata + SIZEOF(.rodata), 128);
+
+
+
 	/* Constructor tables (read-only) */
 	. = ALIGN(0x10);
-	_ctors = .;
 	.preinit_array : {
-		PROVIDE_HIDDEN (__preinit_array_start = .);
+		PROVIDE_HIDDEN (__preinit_array_begin = .);
 		KEEP (*(.preinit_array))
 		PROVIDE_HIDDEN (__preinit_array_end = .);
 	}
 
-	. = ALIGN(0x10);
 	.init_array : {
-		PROVIDE_HIDDEN (__init_array_start = .);
+		PROVIDE_HIDDEN (__init_array_begin = .);
 		KEEP (*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
 		KEEP (*(.init_array .ctors))
 		PROVIDE_HIDDEN (__init_array_end = .);
 	}
-	_ectors = .;
+
+	__start_ctors = ADDR(.preinit_array);
+	__stop_ctors = ALIGN(__start_ctors + SIZEOF(.preinit_array) + SIZEOF(.init_array), 128);
 
 		/* Read-write data that is initialized explicitly in code */
-	_data = .;
 	.data :
 	{
 		*(.data)
@@ -115,56 +107,39 @@ SECTIONS
 	}
 	_edata = .;
 
+	__start_data = ADDR(.data);
+	__stop_data = ALIGN(__start_data + SIZEOF(.data), 128);
+
+. = ALIGN(__PAGE_SIZE);
+	__cap_relocs : {
+		*(__cap_relocs)
+	}
+
+	__start_relocs = ADDR(__cap_relocs);
+	__stop_relocs = ALIGN(ADDR(__cap_relocs) + SIZEOF(__cap_relocs), 128);
+
 	/* Read-write data that is not initialized explicitly in code */
 	. = ALIGN(__PAGE_SIZE);
-	__bss_start = .;
     .bss :
 	{
 		*(.bss)
 		*(.bss.*)
         *(COMMON)
+		PROVIDE(__stack_begin = .);
+                . += 128 * __PAGE_SIZE;
+        PROVIDE(__stack_end = .);
     }
 	__bss_end = .;
+
+	__start_bss = ADDR(.bss);
+	__stop_bss = ALIGN(__start_bss + SIZEOF(.bss), 128);
 
 	. = ALIGN(__PAGE_SIZE);
 	TLS_SECTIONS
 
 
-	/* -- compartment data sections begin -- */
-		. = ALIGN(0x1000);
-	_comp1 = .;
-	.data_comp1 :
-        {
-		PROVIDE(flexos_comp1_alloc = .);
-		/* here: enough to store the compartment's allocator
-		 * FIXME derive from roundup(sizeof(struct uk_alloc)) */
-		. = . + (1000*__PAGE_SIZE);
-		. = ALIGN(0x1000);
-		*(.data_comp1 .data_comp1.*)
-		. = ALIGN(0x1000);
-	}
-	_ecomp1 = .;
-
-    	. = ALIGN(0x1000);
-	_bss_comp1 = .;
-	.bss_comp1 :
-        {
-		*(.bss_comp1 .bss_comp1.*)
-		. = ALIGN(0x1000);
-	}
-	_ebss_comp1 = .;
-	/* -- compartment data sections end -- */
-
-
-
     . = ALIGN(__PAGE_SIZE);
 	. = ALIGN(16);
-        __stack_start = .;
-    .bss.stack (NOLOAD) :
-        {
-                . += 128 * __PAGE_SIZE;
-    }
-        __stack_end = .;
 
 	. = ALIGN(__PAGE_SIZE);
 	_pagetables = .;
@@ -182,4 +157,4 @@ SECTIONS
 
    /DISCARD/ : { *(.gnu*) *(.note*) }
 }
-__bss_size = (__bss_end - __bss_start)>>3;
+__bss_size = (__stop_bss - __start_bss)>>3;
